@@ -7,11 +7,19 @@ Player::Player()
     mPosY = 0;
     mVelX = 0;
     mVelY = 0;
+
+    //mCollider.w = PLAYER_WIDTH;
+    //mCollider.h = PLAYER_HEIGHT;
 }
 //tai anh cho player
 bool Player::loadPlayer(std::string path, SDL_Renderer* ren)
 {
-    return mPlayerTex.loadFromFile(path, ren);
+    bool e = mPlayerTex.loadFromFile(path, ren);
+    if(e){
+        //mCollider.w = mPlayerTex.getWidth();
+        //mCollider.h = mPlayerTex.getHeight();
+    }
+    return e;
 
 }
 //xu ly khi an phim
@@ -42,29 +50,42 @@ void Player::handleEvent(SDL_Event& e)
         }
     }
 }
-
 void Player::move()
 {
     //player di chuyen huong Ox
     mPosX += mVelX;
-    //di qua gioi han
-    if((mPosX < 0) || (mPosX + PLAYER_WIDTH > SCREEN_WIDTH))
+    //mCollider.x = mPosX;
+    //di qua gioi han hoac va cham
+    if((mPosX < 0) || (mPosX + PLAYER_WIDTH > LEVEL_WIDTH) /*|| checkCollision(mCollider, wall)*/)
     {
         //lui lai
         mPosX -= mVelX;
+        //mCollider.x = mPosX;
     }
 
     //player di chuyen huong Oy
     mPosY += mVelY;
+    //mCollider.y = mPosY;
     //di qua gioi han
-    if((mPosY < 0) || (mPosY + PLAYER_HEIGHT > SCREEN_HEIGHT))
+    if((mPosY < 0) || (mPosY + PLAYER_HEIGHT > LEVEL_HEIGHT) /*|| /*checkCollision(mCollider, wall)*/)
     {
         //lui lai
         mPosY -= mVelY;
+        //mCollider.y = mPosY;
     }
 }
 //hien thi player
-void Player::render(SDL_Renderer* ren)
+void Player::render(SDL_Renderer* ren, int camX, int camY)
 {
-    mPlayerTex.render(ren, mPosX, mPosY);
+    mPlayerTex.render(ren, mPosX - camX, mPosY - camY);
+}
+
+int Player::getPosX()
+{
+    return mPosX;
+}
+
+int Player::getPosY()
+{
+    return mPosY;
 }

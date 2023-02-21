@@ -7,6 +7,7 @@ SDL_Renderer* gRenderer = NULL;
 SDL_Texture* gTexture = NULL;
 
 Player p;
+LTexture bg;
 
 bool init();
 bool loadMedia();
@@ -61,6 +62,10 @@ bool loadMedia()
         std::cout << "Failed to load texture image! ";
         sc = false;
     }
+    if(!bg.loadFromFile("img/bg.png", gRenderer))
+    {
+        std::cout << "Failed to load background texture! ";
+    }
     return sc;
 }
 
@@ -90,6 +95,8 @@ int main(int argc, char* argv[])
             std::cout << "Failed to load media";
         }
         else{
+            SDL_Rect camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+
             bool quit = false;
             SDL_Event e;
             while(!quit){
@@ -98,13 +105,34 @@ int main(int argc, char* argv[])
                     p.handleEvent(e);
                 }
                 p.move();
+                //Center the camera over the dot
+				camera.x = (p.getPosX() + Player::PLAYER_WIDTH / 2) - SCREEN_WIDTH / 2;
+				camera.y = (p.getPosY() + Player::PLAYER_HEIGHT / 2) - SCREEN_HEIGHT / 2;
+
+				//Keep the camera in bounds
+				if( camera.x < 0 ){
+					camera.x = 0;
+				}
+				if( camera.y < 0 ){
+					camera.y = 0;
+				}
+				if( camera.x > LEVEL_WIDTH - camera.w ){
+					camera.x = LEVEL_WIDTH - camera.w;
+				}
+				if( camera.y > LEVEL_HEIGHT - camera.h ){
+					camera.y = LEVEL_HEIGHT - camera.h;
+				}
                 //background tam thoi mau trang
                 SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
                 SDL_RenderClear(gRenderer);
 
-                p.render(gRenderer);
+                bg.render(gRenderer, 0, 0, &camera);
+
+                p.render(gRenderer, camera.x, camera.y);
 
                 SDL_RenderPresent(gRenderer);
+
+                SDL_Delay(1);
             }
         }
     }

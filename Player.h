@@ -17,7 +17,10 @@ class Player
         bool loadPlayer(std::string path, SDL_Renderer* ren);
         void handleEvent(SDL_Event& e);
         void move();
-        void render(SDL_Renderer* ren);
+        void render(SDL_Renderer* ren, int camX, int camY);
+
+        int getPosX();
+		int getPosY();
 
     private:
         //vi tri player
@@ -26,6 +29,8 @@ class Player
         int mVelX, mVelY;
         //texture cua player
         LTexture mPlayerTex;
+        //Rect bao phu player
+        //SDL_Rect mCollider;
 };
 
 #endif // PLAYER_H
